@@ -1,0 +1,8 @@
+.env
+.idea
+__pycache__
+auth/
+certs/
+*.http
+garbage.py
+config.py
