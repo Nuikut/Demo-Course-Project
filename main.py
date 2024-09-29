@@ -5,7 +5,7 @@ from fastapi import Request
 from fastapi.security import HTTPBearer
 from fastapi.security import OAuth2PasswordBearer
 from auth.utils import decode_jwt
-from database import validate_user, create_user
+from database import create_user, validate_user, validate_manager
 
 app = FastAPI()
 
@@ -19,22 +19,17 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
     payload = decode_jwt(token)
 
 
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
-
-
 @app.get("/login")
 async def load_login_page(request: Request):
-    return templates.TemplateResponse("login.html", {"request": request})
+    return templates.TemplateResponse("login.html", {"request": request, "action": "/login"})
 
 
 @app.post("/login")
 async def login(request: Request):
     form = await request.form()
-    if validate_user(form):
-        return validate_user(form)
-    return templates.TemplateResponse("login.html", {"request": request})
+    if token := validate_user(form.get("username"), form.get("password")):
+        return token
+    return templates.TemplateResponse("login.html", {"request": request, "action": "/login"})
 
 
 @app.get("/register")
@@ -45,9 +40,22 @@ async def load_register_page(request: Request):
 @app.post("/register")
 async def register_user(request: Request):
     form = await request.form()
-    if create_user(form):
+    if create_user(form.get("username"), form.get("password")):
         return templates.TemplateResponse("register.html", {"request": request, "message": "Успех!"})
     return templates.TemplateResponse("register.html", {"request": request, "message": "Такой пользователь уже существует"})
+
+
+@app.get("/manager")
+async def load_manager_page(request: Request):
+    return templates.TemplateResponse("login.html", {"request": request, "action": "/manager"})
+
+
+@app.post("/manager")
+async def login_manager(request: Request):
+    form = await request.form()
+    if token := validate_manager(form.get("username"), form.get("password")):
+        return token
+    return templates.TemplateResponse("login.html", {"request": request, "action": "/manager"})
 
 
 @app.get("/me")

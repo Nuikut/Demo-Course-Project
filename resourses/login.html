@@ -59,7 +59,7 @@
 
 <div class="login-container">
     <h2>Авторизация</h2>
-    <form method="POST" action="/login">
+    <form method="POST" action={{action}}>
         <div class="form-group">
             <label for="username">Логин:</label>
             <input type="text" id="username" name="username" value="{{username}}" required>
@@ -71,7 +71,9 @@
         <button type="submit">Войти</button>
     </form>
     <h3></h3>
+    {% if action == "/login" %}
     <a href="/register">Зарегистрироваться</a>
+    {% endif %}
 </div>
 </body>
 </html>
