@@ -1,5 +1,6 @@
-.env
+backend/.env
 .idea
 __pycache__
-certs/
-garbage.py
+backend/certs/
+backend/garbage.py
+frontend/
